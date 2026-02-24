@@ -1,0 +1,54 @@
+plugins {
+    id 'java-library'
+    id 'io.qameta.allure' version '2.12.0'
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs 'main/java/src'
+        }
+    }
+}
+
+allure {
+    report {
+        version.set("2.29.0")
+    }
+    adapter {
+        aspectjWeaver.set(true)
+        frameworks {
+            junit5 {
+                adapterVersion.set("2.29.0")
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'com.codeborne:selenide:7.7.3'
+    testImplementation 'io.qameta.allure:allure-selenide:2.29.0'
+    testImplementation "org.slf4j:slf4j-simple:2.0.12"
+    testImplementation 'org.seleniumhq.selenium:selenium-java:4.29.0'
+    testImplementation 'org.aspectj:aspectjweaver:1.9.22'
+    testImplementation 'org.springframework:spring-aspects:5.3.23'
+    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.11.4')
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+test {
+    systemProperty 'junit.jupiter.execution.parallel.enabled', 'true'
+    systemProperty 'junit.jupiter.execution.parallel.mode.default', 'concurrent'
+    systemProperty 'junit.jupiter.execution.parallel.config.strategy', 'fixed'
+    systemProperty 'junit.jupiter.execution.parallel.config.fixed.parallelism', '2'
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2)
+    useJUnitPlatform()
+}
